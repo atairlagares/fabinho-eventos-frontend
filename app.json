@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Fabinho Eventos",
-    "slug": "fabinho-eventos",
+    "slug": "fabinho-eventos-app",
     "owner": "atairlagares",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,13 +28,13 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "02c21313-e254-4a42-b9bb-3884b1d45d53"
-      }
-    },
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2479a1df-7990-4b61-9e04-259911aae514"
+      }
+    }
   }
 }

@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler'; // <<--- CORREÇÃO ADICIONADA AQUI
+
 // App.js (Corrigido com Stack.Group)
 
 import React, { useState, useEffect } from 'react';

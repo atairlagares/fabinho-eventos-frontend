@@ -19,7 +19,8 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://192.168.15.34:3001';
+import { API_URL } from '../config';
+
 
 // Função para formatar moeda (R$)
 function formatCurrency(value) {

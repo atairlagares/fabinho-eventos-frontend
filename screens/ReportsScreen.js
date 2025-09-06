@@ -10,7 +10,8 @@ import * as XLSX from 'xlsx';
 import { Asset } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://192.168.15.34:3001';
+import { API_URL } from '../config';
+
 
 const formatDateOnly = (dateString) => {
     if (!dateString || typeof dateString !== 'string') return 'N/A';

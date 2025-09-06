@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import axios from 'axios';
 
-const API_URL = 'http://192.168.15.34:3001';
+import { API_URL } from '../config';
+
 
 export default function NewCnpjRegistrationScreen({ route, navigation }) {
     const { itemToEdit } = route.params || {};

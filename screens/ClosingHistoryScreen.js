@@ -6,7 +6,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
-const API_URL = 'http://192.168.15.34:3001';
+import { API_URL } from '../config';
+
 
 
 const formatDateTime = (isoString) => {

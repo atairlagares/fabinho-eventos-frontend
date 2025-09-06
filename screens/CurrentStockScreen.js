@@ -8,7 +8,8 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 
-const API_URL = 'http://192.168.15.34:3001';
+import { API_URL } from '../config';
+
 
 
 
