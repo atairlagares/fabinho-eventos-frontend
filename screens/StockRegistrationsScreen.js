@@ -102,6 +102,9 @@ export default function StockRegistrationsScreen({ navigation }) {
                 <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('NewEventRegistration')}>
                     <Text style={styles.addButtonText}>Novo Evento</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('UserRegistration')}>
+                <Text style={styles.addButtonText}>Novo Usuário</Text>
+                </TouchableOpacity>
             </View>
             
             <TextInput style={styles.searchInput} placeholder="Buscar por nome..." value={searchQuery} onChangeText={setSearchQuery} />

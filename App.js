@@ -1,6 +1,6 @@
-import 'react-native-gesture-handler'; // <<--- CORREÇÃO ADICIONADA AQUI
+import 'react-native-gesture-handler';
 
-// App.js (Corrigido com Stack.Group)
+// App.js (Corrigido com Stack.Group e nova tela de usuário)
 
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -34,6 +34,7 @@ import ReturnReportScreen from './screens/ReturnReportScreen';
 import NewCpfRegistrationScreen from './screens/NewCpfRegistrationScreen';
 import NewCnpjRegistrationScreen from './screens/NewCnpjRegistrationScreen';
 import NewEventRegistrationScreen from './screens/NewEventRegistrationScreen';
+import UserRegistrationScreen from './screens/UserRegistrationScreen'; // <-- NOVA TELA IMPORTADA AQUI
 import TransactionReportScreen from './screens/TransactionReportScreen';
 import TransactionEntryScreen from './screens/TransactionEntryScreen';
 
@@ -103,6 +104,7 @@ export default function App() {
           <Stack.Screen name="NewCpfRegistration" component={NewCpfRegistrationScreen} options={{ title: 'Novo Cadastro CPF' }} />
           <Stack.Screen name="NewCnpjRegistration" component={NewCnpjRegistrationScreen} options={{ title: 'Novo Cadastro CNPJ' }} />
           <Stack.Screen name="NewEventRegistration" component={NewEventRegistrationScreen} options={{ title: 'Novo Cadastro Evento' }} />
+          <Stack.Screen name="UserRegistration" component={UserRegistrationScreen} options={{ title: 'Novo Usuário' }} /> {/* <-- NOVA ROTA ADICIONADA AQUI */}
           <Stack.Screen name="TransactionReport" component={TransactionReportScreen} options={{ title: 'Comprovante' }} />
           <Stack.Screen name="TransactionEntry" component={TransactionEntryScreen} options={({ route }) => ({ title: route.params.title })} />
         </Stack.Group>
