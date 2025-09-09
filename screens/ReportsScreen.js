@@ -1,7 +1,8 @@
-// frontend/screens/ReportsScreen.js
+// frontend/screens/ReportsScreen.js (Corrected)
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { API_URL } from '../config';
 import axios from 'axios';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -9,9 +10,6 @@ import * as FileSystem from 'expo-file-system';
 import * as XLSX from 'xlsx';
 import { Asset } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import { API_URL } from '../config';
-
 
 const formatDateOnly = (dateString) => {
     if (!dateString || typeof dateString !== 'string') return 'N/A';
@@ -62,6 +60,7 @@ export default function ReportsScreen({ navigation }) {
     };
 
     const handleExportPDF = async () => {
+        // This check is now mostly for safety, as the button will be disabled.
         if (!logoBase64) {
             Alert.alert("Aguarde", "A logo ainda está sendo carregada. Tente novamente em um instante.");
             return;
@@ -212,6 +211,9 @@ export default function ReportsScreen({ navigation }) {
         }
     };
 
+    // ** THE FIX IS HERE **
+    const isReady = !isLoading && logoBase64;
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Relatórios</Text>
@@ -223,14 +225,14 @@ export default function ReportsScreen({ navigation }) {
                 </Text>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity 
-                        style={[styles.button, styles.pdfButton]} 
+                        style={[styles.button, styles.pdfButton, !isReady && styles.disabledButton]} 
                         onPress={handleExportPDF}
-                        disabled={isLoading}
+                        disabled={!isReady}
                     >
-                        <Text style={styles.buttonText}>Exportar PDF</Text>
+                        <Text style={styles.buttonText}>{isReady ? 'Exportar PDF' : 'Carregando...'}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
-                        style={[styles.button, styles.excelButton]} 
+                        style={[styles.button, styles.excelButton, isLoading && styles.disabledButton]} 
                         onPress={handleExportExcel}
                         disabled={isLoading}
                     >
@@ -253,4 +255,6 @@ const styles = StyleSheet.create({
     pdfButton: { backgroundColor: '#d9534f', marginRight: 10 },
     excelButton: { backgroundColor: '#5cb85c', marginLeft: 10 },
     buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
+    // ** ADD THIS STYLE **
+    disabledButton: { backgroundColor: '#cccccc' },
 });

@@ -184,9 +184,15 @@ export default function ReturnsScreen({ navigation }) {
                         <Text style={styles.sectionTitle}>{editingIndex !== null ? "Editando Item" : "Adicionar Itens"}</Text>
                         <AutocompleteInput label="Produto Devolvido" placeholder="Busque pelo nome do produto" data={filteredProducts} onSelect={handleSelectProduct} text={productSearch} setText={(text) => { setProductSearch(text); setSelectedProduct(null); }} selectedItem={selectedProduct} />
                         <View style={styles.quantityRow}>
-                            <TextInput style={styles.quantityInput} placeholder="Caixas" value={boxQuantity} onChangeText={setBoxQuantity} keyboardType="numeric" />
-                            <TextInput style={styles.quantityInput} placeholder="Unidades" value={unitQuantity} onChangeText={setUnitQuantity} keyboardType="numeric" />
-                        </View>
+    <View style={{flex: 1, marginRight: 5}}>
+        <Text style={styles.label}>Caixas</Text>
+        <TextInput style={styles.quantityInput} value={boxQuantity} onChangeText={setBoxQuantity} keyboardType="numeric" />
+    </View>
+    <View style={{flex: 1, marginLeft: 5}}>
+        <Text style={styles.label}>Unidades</Text>
+        <TextInput style={styles.quantityInput} value={unitQuantity} onChangeText={setUnitQuantity} keyboardType="numeric" />
+    </View>
+</View>
                         <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
                             <Text style={styles.addButtonText}>{editingIndex !== null ? "ATUALIZAR ITEM" : "ADICIONAR ITEM"}</Text>
                         </TouchableOpacity>
