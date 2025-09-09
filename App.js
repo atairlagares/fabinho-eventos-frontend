@@ -1,7 +1,4 @@
 import 'react-native-gesture-handler';
-
-// App.js (Corrigido com Stack.Group e nova tela de usuário)
-
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -34,7 +31,7 @@ import ReturnReportScreen from './screens/ReturnReportScreen';
 import NewCpfRegistrationScreen from './screens/NewCpfRegistrationScreen';
 import NewCnpjRegistrationScreen from './screens/NewCnpjRegistrationScreen';
 import NewEventRegistrationScreen from './screens/NewEventRegistrationScreen';
-import UserRegistrationScreen from './screens/UserRegistrationScreen'; // <-- NOVA TELA IMPORTADA AQUI
+import UserRegistrationScreen from './screens/UserRegistrationScreen';
 import TransactionReportScreen from './screens/TransactionReportScreen';
 import TransactionEntryScreen from './screens/TransactionEntryScreen';
 
@@ -48,8 +45,11 @@ export default function App() {
     const checkLoginStatus = async () => {
       try {
         const userCpf = await AsyncStorage.getItem('loggedInUserCpf');
-        if (userCpf) setInitialRoute('ModuleSelection');
-        else setInitialRoute('Login');
+        if (userCpf) {
+          setInitialRoute('ModuleSelection');
+        } else {
+          setInitialRoute('Login');
+        }
       } catch (e) {
         setInitialRoute('Login');
       } finally {
@@ -60,12 +60,16 @@ export default function App() {
   }, []);
 
   if (isLoading) {
-    return ( <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><ActivityIndicator size="large" /></View> );
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
     <NavigationContainer>
-      <Stack.Navigator 
+      <Stack.Navigator
         initialRouteName={initialRoute}
         screenOptions={{
           headerStyle: { backgroundColor: '#1E63B8' },
@@ -78,7 +82,6 @@ export default function App() {
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="ModuleSelection" component={ModuleSelectionScreen} options={{ title: 'Seleção de Módulo' }} />
         </Stack.Group>
-
         {/* Grupo de telas do Módulo Financeiro */}
         <Stack.Group>
           <Stack.Screen name="EventSelection" component={EventSelectionScreen} options={{ title: 'Seleção de Evento' }} />
@@ -89,7 +92,6 @@ export default function App() {
           <Stack.Screen name="FixedCashierClosing" component={FixedCashierClosingScreen} options={{ title: 'Fechamento Caixa Fixo' }} />
           <Stack.Screen name="ClosingHistory" component={ClosingHistoryScreen} options={{ title: 'Histórico de Fechamentos' }} />
         </Stack.Group>
-        
         {/* Grupo de telas do Módulo de Estoque */}
         <Stack.Group>
           <Stack.Screen name="StockDashboard" component={StockDashboardScreen} options={{ title: 'Dashboard de Estoque' }} />
@@ -104,7 +106,7 @@ export default function App() {
           <Stack.Screen name="NewCpfRegistration" component={NewCpfRegistrationScreen} options={{ title: 'Novo Cadastro CPF' }} />
           <Stack.Screen name="NewCnpjRegistration" component={NewCnpjRegistrationScreen} options={{ title: 'Novo Cadastro CNPJ' }} />
           <Stack.Screen name="NewEventRegistration" component={NewEventRegistrationScreen} options={{ title: 'Novo Cadastro Evento' }} />
-          <Stack.Screen name="UserRegistration" component={UserRegistrationScreen} options={{ title: 'Novo Usuário' }} /> {/* <-- NOVA ROTA ADICIONADA AQUI */}
+          <Stack.Screen name="UserRegistration" component={UserRegistrationScreen} options={{ title: 'Novo Usuário' }} />
           <Stack.Screen name="TransactionReport" component={TransactionReportScreen} options={{ title: 'Comprovante' }} />
           <Stack.Screen name="TransactionEntry" component={TransactionEntryScreen} options={({ route }) => ({ title: route.params.title })} />
         </Stack.Group>

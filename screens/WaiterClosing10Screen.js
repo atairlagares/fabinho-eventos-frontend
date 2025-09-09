@@ -1,50 +1,27 @@
-// frontend/screens/WaiterClosing10Screen.js (Nova Tela)
-
+// frontend/screens/WaiterClosing10Screen.js (Versão com Modal Atualizado)
 import React, { useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    SafeAreaView,
-    TextInput,
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
-    TouchableOpacity,
-    Button,
-    ScrollView,
-    Modal,
-    Switch
-} from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, TouchableOpacity, Button, ScrollView, Modal, Switch } from 'react-native';
+import { API_URL } from '../config';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { API_URL } from '../config';
-
-
-// Função para formatar moeda (R$)
 function formatCurrency(value) {
-  if (!value) return '';
-  const cleanValue = String(value).replace(/\D/g, '');
-  if (cleanValue === '') return '';
-  const numberValue = parseInt(cleanValue, 10);
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numberValue / 100);
+    if (!value) return '';
+    const cleanValue = String(value).replace(/\D/g, '');
+    if (cleanValue === '') return '';
+    const numberValue = parseInt(cleanValue, 10);
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numberValue / 100);
 }
 
 export default function WaiterClosing10Screen({ navigation }) {
-    // Estados de controle
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [dataToConfirm, setDataToConfirm] = useState(null);
-
-    // Estados do Autocomplete
     const [waiters, setWaiters] = useState([]);
     const [cpfInput, setCpfInput] = useState('');
     const [filteredWaiters, setFilteredWaiters] = useState([]);
     const [selectedWaiter, setSelectedWaiter] = useState(null);
-
-    // Estados do Formulário
     const [numeroMaquina, setNumeroMaquina] = useState('');
     const [temEstorno, setTemEstorno] = useState(false);
     const [valorEstorno, setValorEstorno] = useState('');
@@ -53,15 +30,12 @@ export default function WaiterClosing10Screen({ navigation }) {
     const [debito, setDebito] = useState('');
     const [pix, setPix] = useState('');
     const [cashless, setCashless] = useState('');
-
-    // Estados de Cálculo
     const [comissao10, setComissao10] = useState(0);
     const [comissao4, setComissao4] = useState(0);
     const [comissaoTotal, setComissaoTotal] = useState(0);
     const [valorAcerto, setValorAcerto] = useState(0);
     const [acertoLabel, setAcertoLabel] = useState('Aguardando valores...');
 
-    // Busca a lista de garçons ao carregar a tela
     useEffect(() => {
         const fetchWaiters = async () => {
           try {
@@ -76,7 +50,6 @@ export default function WaiterClosing10Screen({ navigation }) {
         fetchWaiters();
     }, []);
 
-    // Filtra garçons para o autocomplete
     useEffect(() => {
         const cleanCpfInput = cpfInput.replace(/\D/g, '');
         if (cleanCpfInput.length > 0 && !selectedWaiter) {
@@ -86,7 +59,6 @@ export default function WaiterClosing10Screen({ navigation }) {
         }
     }, [cpfInput, waiters, selectedWaiter]);
     
-    // Lógica principal de cálculo em tempo real
     useEffect(() => {
         const numValorTotal = (parseInt(String(valorTotal).replace(/\D/g, '') || '0', 10)) / 100;
         const numCredito = (parseInt(String(credito).replace(/\D/g, '') || '0', 10)) / 100;
@@ -96,7 +68,7 @@ export default function WaiterClosing10Screen({ navigation }) {
         const numValorEstorno = (parseInt(String(valorEstorno).replace(/\D/g, '') || '0', 10)) / 100;
 
         const baseComissao10 = numCashless > 0 ? numValorTotal - numCashless : numValorTotal;
-        const c10 = baseComissao10 * 0.10; // << ALTERAÇÃO AQUI
+        const c10 = baseComissao10 * 0.10;
         setComissao10(c10);
 
         const c4 = numCashless * 0.04;
@@ -117,23 +89,24 @@ export default function WaiterClosing10Screen({ navigation }) {
         }
     }, [valorTotal, credito, debito, pix, cashless, valorEstorno, temEstorno]);
 
-    // Função para selecionar um garçom da lista
     const handleSelectWaiter = (waiter) => {
         setSelectedWaiter(waiter);
         setCpfInput(waiter.cpf);
         setFilteredWaiters([]);
     };
     
-    // Função que abre a tela de confirmação
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (!selectedWaiter || !numeroMaquina) {
             alert('Por favor, selecione um garçom e preencha o número da máquina.');
             return;
         }
-
+        const eventName = await AsyncStorage.getItem('activeEvent');
         const data = {
+            eventName,
             waiterName: selectedWaiter.name,
-            valorTotal: (parseInt(valorTotal || '0', 10)) / 100,
+            valorTotal: (parseInt(String(valorTotal).replace(/\D/g, '') || '0', 10)) / 100,
+            comissao10,
+            comissao4,
             comissaoTotal,
             acertoLabel,
             valorAcerto,
@@ -142,7 +115,6 @@ export default function WaiterClosing10Screen({ navigation }) {
         setModalVisible(true);
     };
 
-    // Função que efetivamente salva os dados após a confirmação
     const handleFinalSave = async () => {
         setIsSaving(true);
         try {
@@ -170,7 +142,7 @@ export default function WaiterClosing10Screen({ navigation }) {
                 acertoLabel,
                 valorAcerto,
             };
-            const response = await axios.post(`${API_URL}/api/closings/waiter10`, closingData); // << NOVO ENDPOINT
+            const response = await axios.post(`${API_URL}/api/closings/waiter10`, closingData);
             alert(`Fechamento salvo com sucesso!\nANOTE O Nº DE PROTOCOLO NA FICHA DO GARÇOM.\nProtocolo: ${response.data.protocol}\nGarçom: ${response.data.waiterName}`);
             
             navigation.goBack();
@@ -238,8 +210,8 @@ export default function WaiterClosing10Screen({ navigation }) {
                     </View>
     
                     <View style={[styles.section, styles.resultsContainer]}>
-                        <Text style={styles.resultLabel}>Comissão 10%: <Text style={styles.resultValue}>{comissao10.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
-                        <Text style={styles.resultLabel}>Comissão 4%: <Text style={styles.resultValue}>{comissao4.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
+                        <Text style={styles.resultLabel}>Venda Total (10%): <Text style={styles.resultValue}>{comissao10.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
+                        <Text style={styles.resultLabel}>Venda Total (4%): <Text style={styles.resultValue}>{comissao4.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
                         <Text style={styles.resultLabelTotal}>Comissão Total: <Text style={styles.resultValue}>{comissaoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
                         <Text style={styles.resultLabelTotal}>{acertoLabel} <Text style={styles.resultValueFinal}>{valorAcerto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
                         
@@ -261,9 +233,13 @@ export default function WaiterClosing10Screen({ navigation }) {
                         <Text style={styles.modalTitle}>Confirmar Fechamento</Text>
                         {dataToConfirm && (
                             <>
+                                <Text style={styles.modalText}>Evento: <Text style={styles.modalBold}>{dataToConfirm.eventName}</Text></Text>
                                 <Text style={styles.modalText}>Garçom: <Text style={styles.modalBold}>{dataToConfirm.waiterName}</Text></Text>
-                                <Text style={styles.modalText}>Valor Total: <Text style={styles.modalBold}>{dataToConfirm.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
+                                <View style={styles.separator} />
+                                <Text style={styles.modalText}>Venda Total (10%): <Text style={styles.modalBold}>{dataToConfirm.comissao10.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
+                                <Text style={styles.modalText}>Venda Total (4%): <Text style={styles.modalBold}>{dataToConfirm.comissao4.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
                                 <Text style={styles.modalText}>Comissão Total: <Text style={styles.modalBold}>{dataToConfirm.comissaoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
+                                <View style={styles.separator} />
                                 <Text style={styles.modalTextFinal}>{dataToConfirm.acertoLabel} <Text style={styles.modalBold}>{dataToConfirm.valorAcerto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text></Text>
                             </>
                         )}
@@ -285,10 +261,7 @@ const styles = StyleSheet.create({
     section: { marginBottom: 15, paddingHorizontal: 20 },
     label: { fontSize: 18, color: '#333', marginBottom: 8 },
     input: { backgroundColor: '#FFFFFF', padding: 15, borderRadius: 8, fontSize: 20, borderWidth: 1, borderColor: '#DDE3EA' },
-    boldInput: {
-        fontWeight: 'bold',
-        fontSize: 22,
-    },
+    boldInput: { fontWeight: 'bold', fontSize: 22, },
     waiterName: { fontSize: 18, fontWeight: 'bold', color: 'green', marginVertical: 10, textAlign: 'center' },
     resultsContainer: { backgroundColor: '#e9ecef', padding: 15, borderRadius: 8, marginTop: 10 },
     resultLabel: { fontSize: 18, color: '#495057', marginBottom: 5 },
@@ -298,50 +271,12 @@ const styles = StyleSheet.create({
     suggestionItem: { padding: 15, backgroundColor: '#f9f9f9', borderBottomWidth: 1, borderBottomColor: '#eee', borderColor: '#ddd', borderWidth: 1, borderRadius: 8 },
     buttonContainer: { marginTop: 20 },
     switchContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, marginTop: 10 },
-    modalCenteredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: '90%'
-    },
-    modalTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center'
-    },
-    modalText: {
-        fontSize: 18,
-        marginBottom: 10,
-        textAlign: 'left',
-        width: '100%'
-    },
-    modalTextFinal: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 10,
-        textAlign: 'center'
-    },
-    modalBold: {
-        fontWeight: 'bold',
-    },
-    modalButtonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginTop: 25,
-    }
+    modalCenteredView: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+    modalView: { margin: 20, backgroundColor: "white", borderRadius: 20, padding: 35, alignItems: "center", shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5, width: '90%' },
+    modalTitle: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+    modalText: { fontSize: 18, marginBottom: 10, textAlign: 'left', width: '100%' },
+    modalTextFinal: { fontSize: 20, fontWeight: 'bold', marginTop: 10, textAlign: 'center' },
+    modalBold: { fontWeight: 'bold' },
+    modalButtonContainer: { flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginTop: 25, },
+    separator: { height: 1, width: '100%', backgroundColor: '#eee', marginVertical: 10, },
 });

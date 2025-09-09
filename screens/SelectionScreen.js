@@ -1,4 +1,4 @@
-// frontend/screens/SelectionScreen.js (ATUALIZADO)
+// frontend/screens/SelectionScreen.js (CORRIGIDO)
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image } from 'react-native';
@@ -12,7 +12,7 @@ const DeveloperCreditFooter = () => (
 );
 
 export default function SelectionScreen({ navigation }) {
-    <SafeAreaView style={styles.container}></SafeAreaView>
+  // A linha de código errada foi removida daqui.
   const [activeEvent, setActiveEvent] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
 
@@ -85,9 +85,6 @@ export default function SelectionScreen({ navigation }) {
       <TouchableOpacity style={[styles.card, styles.logoutButton]} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Deslogar</Text>
       </TouchableOpacity>
-
-
-      
     </SafeAreaView>
   );
 }
@@ -158,5 +155,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 10,
         },
-  
 });
